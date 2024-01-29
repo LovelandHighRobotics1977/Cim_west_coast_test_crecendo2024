@@ -8,8 +8,8 @@ void Robot::RobotInit() {}
 void Robot::RobotPeriodic() {}
 
 void Robot::AutonomousInit() {
-  m_intakeL.Set(ControlMode::PercentOutput, 1);
-  m_intakeR.Set(ControlMode::PercentOutput, -1);
+  m_intakeL.Set(ControlMode::PercentOutput, -1);
+  m_intakeR.Set(ControlMode::PercentOutput, 1);
 }
 void Robot::AutonomousPeriodic() {}
 
