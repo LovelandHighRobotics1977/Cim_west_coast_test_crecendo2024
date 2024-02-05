@@ -4,37 +4,51 @@
 
 #include "Robot.h"
 
-void Robot::RobotInit() {}
+void Robot::RobotInit() 
+{
+  m_driveMotorLBack.SetNeutralMode(Brake);
+  m_driveMotorLFront.SetNeutralMode(Brake);
+  m_driveMotorRBack.SetNeutralMode(Brake);
+  m_driveMotorRFront.SetNeutralMode(Brake);
+}
 void Robot::RobotPeriodic() {}
 
-void Robot::AutonomousInit() {
-  m_intakeL.Set(ControlMode::PercentOutput, -1);
-  m_intakeR.Set(ControlMode::PercentOutput, 1);
+void Robot::AutonomousInit() 
+{
+  //drive(-0.5, 0.5);
 }
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() 
 {
-  Robot::direction();
-  Robot::arm();
+  if(Joystick)
+  {
+    if(m_joystick.GetRawButton(12))
+    {
+      Robot::JoystickDirection();
+      Robot::JoystickArm();
+    }
+    else
+    {
+      drive((-m_joystick.GetRawAxis(4)+1)/2, (-m_joystick.GetRawAxis(4)+1)/2);
+      JoystickArm();
+    }
+  }
+  else
+  {
+    XboxDirection();
+  }
 }
 
 //takes the joystick input and sets the direction sent to the drive function
-void Robot::direction()
+//also uses the M1, 2, and 3 mode switch on the throttle to change from coast to break mode
+//M1 is break, and the other two are coast
+void Robot::JoystickDirection()
 {
   float forward = m_joystick.GetRawAxis(0);
   float rotation = m_joystick.GetRawAxis(1);
-  if (!m_joystick.GetRawButton(2))
-  {
-    rotation /= 1.5;
-  }
-  if (m_joystick.GetRawButton(3))
-  {
-    rotation *= 2;
-  }
-  // std::cout << "left motor " << forward-rotation << "\nright motor " <<
-  // forward + rotation << "\n";
+  rotation /= 2;
   if (forward > 0.2 || forward < -0.2 || rotation > 0.2 || rotation < -0.2)
   {
     drive(forward - rotation, forward + rotation);
@@ -43,24 +57,97 @@ void Robot::direction()
   {
     drive(0, 0);
   }
+  if(m_joystick.GetRawButton(9))
+  {
+    m_driveMotorLBack.SetNeutralMode(Brake);
+    m_driveMotorLFront.SetNeutralMode(Brake);
+    m_driveMotorRBack.SetNeutralMode(Brake);
+    m_driveMotorRFront.SetNeutralMode(Brake);
+  }
+  else
+  {
+    m_driveMotorLBack.SetNeutralMode(Coast);
+    m_driveMotorLFront.SetNeutralMode(Coast);
+    m_driveMotorRBack.SetNeutralMode(Coast);
+    m_driveMotorRFront.SetNeutralMode(Coast);
+  }
 }
 
-//controlls the arm of the robot, currently just for the shooting mechanisum from an xbox controller
-//left index trigger to shoot and right index trigger for intake
-//the index trigger is the small button that your index finger rests on while holding the throttle
-void Robot::arm()
+//uses the two Y positions from the Xbox sticks to drive the robot. 
+//the B Button changes the speed, but not well
+void Robot::XboxDirection()
 {
-  if(m_joystick.GetRawButton(20))
+  drive(-m_armControll.GetLeftY() * DriveSpeed, m_armControll.GetRightY() * (DriveSpeed-(0.01 * DriveSpeed)));
+  if(m_armControll.GetBButton())
   {
-    m_intakeL.Set(ControlMode::PercentOutput, 0.2);
-    m_intakeR.Set(ControlMode::PercentOutput, -0.2);
+    if(DriveSpeed == 1)
+    {
+      DriveSpeed = 0.2;
+    }
+    else
+    {
+      DriveSpeed = 1;
+    }
   }
-  if(m_joystick.GetRawButton(22))
+}
+
+//uses the xbox controller to controll the arm
+//the y button launces at full speed, the x button is for the amp, and the A button is for the intake
+void Robot::XboxArm()
+{
+  if(m_armControll.GetAButton())
   {
-    m_intakeL.Set(ControlMode::PercentOutput, -intakeSpeed);
-    m_intakeR.Set(ControlMode::PercentOutput, intakeSpeed);
+    m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
+    m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
   }
-  if(!m_joystick.GetRawButton(20) && !m_joystick.GetRawButton(22))
+  if(m_armControll.GetXButton())
+  {
+    m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
+    m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
+  }
+  if(m_armControll.GetYButton())
+  {
+    m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
+    m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
+  }
+  
+  if(!m_armControll.GetAButton() && !m_armControll.GetXButton() && !m_armControll.GetYButton())
+  {
+    m_intakeL.Set(ControlMode::PercentOutput, 0);
+    m_intakeR.Set(ControlMode::PercentOutput, 0);
+  }
+}
+
+
+//controlls the arm of the robot, currently just for the shooting mechanisum from the saitel X45 controllers
+//left index trigger to shoot for the amp and right index trigger for intake
+//if you pull the trigger up, that is for shooting in the higer target
+//the index trigger is the small button that your index finger rests on while holding the throttle
+//the speed for both parts is controlled by the upper knob
+void Robot::JoystickArm()
+{
+  shootSpeed = (m_joystick.GetRawAxis(2)+1)/2;
+  ampSpeed = (m_joystick.GetRawAxis(2)+1)/4;
+  //if (m_pdp.GetCurrent(15) < 10 && m_pdp.GetCurrent(2) < 10)
+  {
+    if(m_joystick.GetRawButton(20))
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
+    }
+    if(m_joystick.GetRawButton(22))
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
+    }
+    if(m_joystick.GetRawButton(19))
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
+  }
+  }
+  
+  if(!m_joystick.GetRawButton(20) && !m_joystick.GetRawButton(22) && !m_joystick.GetRawButton(19))
   {
     m_intakeL.Set(ControlMode::PercentOutput, 0);
     m_intakeR.Set(ControlMode::PercentOutput, 0);
@@ -74,8 +161,9 @@ void Robot::drive(double left, double right)
   left *= (((-m_joystick.GetRawAxis(4)) + 1) / 2) +
           (0.2 * (1 - m_joystick.GetRawAxis(4)));
   right *= (((-m_joystick.GetRawAxis(4)) + 1) / 2);
-  // if (m_pdp.GetCurrent(14) < 10 && m_pdp.GetCurrent(15) < 10 &&
-  // m_pdp.GetCurrent(16) < 10 && m_pdp.GetCurrent(17) < 10)
+  //checks the current of the motors and stops them if they are above the allowed current
+ // if (m_pdp.GetCurrent(14) < 10 && m_pdp.GetCurrent(13) < 10 &&
+  //m_pdp.GetCurrent(0) < 10 && m_pdp.GetCurrent(3) < 10)
   {
     m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
     m_driveMotorLFront.Set(ControlMode::PercentOutput, left);

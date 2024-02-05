@@ -9,6 +9,7 @@
 #include <frc/Joystick.h>
 #include <ctre/phoenix.h>
 #include <frc/XboxController.h>
+#include <frc/PowerDistribution.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -30,21 +31,34 @@ class Robot : public frc::TimedRobot {
   void SimulationInit() override;
   void SimulationPeriodic() override;
 
-  double intakeSpeed = 1;
-void direction();
+  double intakeSpeed = 0.2;
+  double ampSpeed = 0.3;
+  double shootSpeed = 1;
+  bool Joystick = false;
+  double DriveSpeed = 1;
+  void JoystickDirection();
+  void XboxDirection();
+
+  void XboxArm();
 
 void drive(double left, double right);
 
-void arm();
+void JoystickArm();
 
 
   private:
+  //drive motors
   TalonFX m_driveMotorRFront{2};
   TalonFX m_driveMotorRBack{3};
   TalonFX m_driveMotorLFront{4};
   TalonFX m_driveMotorLBack{5};
+  //intake motors
   TalonFX m_intakeL{16};
   TalonFX m_intakeR{15};
+  //controllers
   frc::Joystick m_joystick{0};
+  frc::XboxController m_armControll{1};
+  //pdh
+  frc::PowerDistribution m_pdp{1, frc::PowerDistribution::ModuleType::kCTRE};
   //frc::XboxController m_armControll{1};
 };
