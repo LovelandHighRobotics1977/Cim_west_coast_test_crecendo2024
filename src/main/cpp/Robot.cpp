@@ -6,6 +6,7 @@
 
 void Robot::RobotInit() 
 {
+  //sets the robot to brake when it starts
   m_driveMotorLBack.SetNeutralMode(Brake);
   m_driveMotorLFront.SetNeutralMode(Brake);
   m_driveMotorRBack.SetNeutralMode(Brake);
@@ -74,20 +75,17 @@ void Robot::JoystickDirection()
 }
 
 //uses the two Y positions from the Xbox sticks to drive the robot. 
-//the B Button changes the speed, but not well
+//the right bumper Button changes the speed
 void Robot::XboxDirection()
 {
   drive(-m_armControll.GetLeftY() * DriveSpeed, m_armControll.GetRightY() * (DriveSpeed-(0.01 * DriveSpeed)));
-  if(m_armControll.GetBButton())
+  if(m_armControll.GetRightBumper())
   {
-    if(DriveSpeed == 1)
-    {
-      DriveSpeed = 0.2;
-    }
-    else
-    {
-      DriveSpeed = 1;
-    }
+    DriveSpeed = 0.3;
+  }
+  else
+  {
+    DriveSpeed = 0.8;
   }
 }
 
@@ -157,19 +155,30 @@ void Robot::JoystickArm()
 //sets the motors on either ide to the variables that are sent to it
 void Robot::drive(double left, double right)
 {
-  // setting motor speeds to parameters
-  left *= (((-m_joystick.GetRawAxis(4)) + 1) / 2) +
-          (0.2 * (1 - m_joystick.GetRawAxis(4)));
-  right *= (((-m_joystick.GetRawAxis(4)) + 1) / 2);
-  //checks the current of the motors and stops them if they are above the allowed current
- // if (m_pdp.GetCurrent(14) < 10 && m_pdp.GetCurrent(13) < 10 &&
-  //m_pdp.GetCurrent(0) < 10 && m_pdp.GetCurrent(3) < 10)
+  //if a joystick is present, sets the speed to the throttle
+  if(Joystick)
   {
-    m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
-    m_driveMotorLFront.Set(ControlMode::PercentOutput, left);
-    m_driveMotorRBack.Set(ControlMode::PercentOutput, right);
-    m_driveMotorRFront.Set(ControlMode::PercentOutput, right);
+    //sets throttle for the Saitek X45 joysticks
+    if(X45)
+    {
+      left *= (((-m_joystick.GetRawAxis(4)) + 1) / 2) +
+              (0.2 * (1 - m_joystick.GetRawAxis(4)));
+      right *= (((-m_joystick.GetRawAxis(4)) + 1) / 2);
+    }
+    //sets the speed for the logitech X3D Joysticks
+    else
+    {
+      left *= (((-m_joystick.GetRawAxis(3)) + 1) / 2) +
+              (0.2 * (1 - m_joystick.GetRawAxis(3)));
+      right *= (((-m_joystick.GetRawAxis(3)) + 1) / 2);
+    }
   }
+  
+  
+  m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
+  m_driveMotorLFront.Set(ControlMode::PercentOutput, left);
+  m_driveMotorRBack.Set(ControlMode::PercentOutput, right);
+  m_driveMotorRFront.Set(ControlMode::PercentOutput, right);
 }
 
 void Robot::DisabledInit() {}

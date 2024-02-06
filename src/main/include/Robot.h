@@ -35,7 +35,8 @@ class Robot : public frc::TimedRobot {
   double ampSpeed = 0.3;
   double shootSpeed = 1;
   bool Joystick = false;
-  double DriveSpeed = 1;
+  bool X45 = false;
+  double DriveSpeed = 0.8;
   void JoystickDirection();
   void XboxDirection();
 
