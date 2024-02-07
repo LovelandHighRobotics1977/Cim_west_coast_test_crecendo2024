@@ -10,3 +10,5 @@ I am working on adding support for the Logitech X3D joystick, but that code curr
 
 There is no auto.
 
+This branch is for working on splitting the code up between multiple files in order to make it more custamizeable and easier to change.
+
