@@ -79,6 +79,7 @@ void Robot::JoystickDirection()
 void Robot::XboxDirection()
 {
   drive(-m_armControll.GetLeftY() * DriveSpeed, m_armControll.GetRightY() * (DriveSpeed-(0.01 * DriveSpeed)));
+  /*
   if(m_armControll.GetRightBumper())
   {
     DriveSpeed = 0.3;
@@ -87,6 +88,7 @@ void Robot::XboxDirection()
   {
     DriveSpeed = 0.8;
   }
+  */
 }
 
 //uses the xbox controller to controll the arm
@@ -173,12 +175,23 @@ void Robot::drive(double left, double right)
       right *= (((-m_joystick.GetRawAxis(3)) + 1) / 2);
     }
   }
-  
-  
-  m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
-  m_driveMotorLFront.Set(ControlMode::PercentOutput, left);
-  m_driveMotorRBack.Set(ControlMode::PercentOutput, right);
-  m_driveMotorRFront.Set(ControlMode::PercentOutput, right);
+  //checks the current on the PDH channel that each motor is on before letting them drive
+  if(m_pdp.GetCurrent(12) < 10 && m_pdp.GetCurrent(15) < 10
+   && m_pdp.GetCurrent(0) < 10 && m_pdp.GetCurrent(3) < 10)
+   {
+    m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
+    m_driveMotorLFront.Set(ControlMode::PercentOutput, left);
+    m_driveMotorRBack.Set(ControlMode::PercentOutput, right);
+    m_driveMotorRFront.Set(ControlMode::PercentOutput, right);
+   }
+   //if the current is too high, it wont let the motors drive
+   else
+   {
+    m_driveMotorLBack.Set(ControlMode::PercentOutput, 0);
+    m_driveMotorLFront.Set(ControlMode::PercentOutput, 0);
+    m_driveMotorRBack.Set(ControlMode::PercentOutput, 0);
+    m_driveMotorRFront.Set(ControlMode::PercentOutput, 0);
+   }
 }
 
 void Robot::DisabledInit() {}

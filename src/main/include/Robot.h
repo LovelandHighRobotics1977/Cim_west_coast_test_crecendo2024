@@ -31,12 +31,20 @@ class Robot : public frc::TimedRobot {
   void SimulationInit() override;
   void SimulationPeriodic() override;
 
+  //speed variables for the arm
   double intakeSpeed = 0.2;
   double ampSpeed = 0.3;
   double shootSpeed = 1;
-  bool Joystick = false;
-  bool X45 = false;
-  double DriveSpeed = 0.8;
+
+  //sets the robots max drive speed for the Xbox controller with dual stick
+  double DriveSpeed = 0.7;
+
+  //variables that tell the robot which controller your using
+  bool Joystick = true;
+  bool X45 = true;
+  
+  
+
   void JoystickDirection();
   void XboxDirection();
 
@@ -53,7 +61,7 @@ void JoystickArm();
   TalonFX m_driveMotorRBack{3};
   TalonFX m_driveMotorLFront{4};
   TalonFX m_driveMotorLBack{5};
-  //intake motors
+  //mech motors
   TalonFX m_intakeL{16};
   TalonFX m_intakeR{15};
   //controllers
@@ -61,5 +69,4 @@ void JoystickArm();
   frc::XboxController m_armControll{1};
   //pdh
   frc::PowerDistribution m_pdp{1, frc::PowerDistribution::ModuleType::kCTRE};
-  //frc::XboxController m_armControll{1};
 };
