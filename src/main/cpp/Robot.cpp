@@ -171,7 +171,7 @@ void Robot::JoystickArm()
 void Robot::drive(double left, double right)
 {
   //if a joystick is present, sets the speed to the throttle
-  if(Joystick)
+  if(JoystickDirection)
   {
     //sets throttle for the Saitek X45 joysticks
     if(X45)
