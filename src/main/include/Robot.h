@@ -42,7 +42,10 @@ class Robot : public frc::TimedRobot {
   double DriveSpeed = 0.6;
 
   //variables that tell the robot which controller your using
-  bool Joystick = false;
+  //if the value is true, you are using a joystick.
+  //if the value is false, you are using Xbox
+  bool JoystickDrive = false;
+  bool JoystickMech = false;
   bool X45 = true;
 
   //the maximum amperadge the motors can draw before shutting off

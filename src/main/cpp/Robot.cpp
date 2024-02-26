@@ -25,24 +25,22 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() 
 {
-  //if you have a joythick plugged in it will set the controll to the joystick
-  if(Joystick)
+  //calls the appropriate function depending on what controller tou are using for Drive
+  if(JoystickDrive)
   {
-    if(m_joystick.GetRawButton(12))
-    {
-      Robot::JoystickDirection();
-      Robot::JoystickArm();
-    }
-    else
-    {
-      drive((-m_joystick.GetRawAxis(4)+1)/2, (-m_joystick.GetRawAxis(4)+1)/2);
-      JoystickArm();
-    }
+    JoystickDirection();
   }
-  //if you dont it sets the controll to an xbox controller
   else
   {
     XboxDirection();
+  }
+  //calls the appropriate function depending on what controller tou are using for mech
+  if(JoystickMech)
+  {
+    JoystickArm();
+  }
+  else
+  {
     XboxArm();
   }
 }
@@ -218,10 +216,6 @@ void Robot::TestPeriodic() {}
 
 void Robot::SimulationInit() {}
 void Robot::SimulationPeriodic() {}
-
-
-
-
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
