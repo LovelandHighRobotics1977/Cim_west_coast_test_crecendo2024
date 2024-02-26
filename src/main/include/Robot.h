@@ -10,6 +10,8 @@
 #include <ctre/phoenix.h>
 #include <frc/XboxController.h>
 #include <frc/PowerDistribution.h>
+#include <frc/PneumaticsControlModule.h>
+#include <frc/DoubleSolenoid.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -37,11 +39,14 @@ class Robot : public frc::TimedRobot {
   double shootSpeed = 1;
 
   //sets the robots max drive speed for the Xbox controller with dual stick
-  double DriveSpeed = 0.7;
+  double DriveSpeed = 0.6;
 
   //variables that tell the robot which controller your using
-  bool Joystick = true;
+  bool Joystick = false;
   bool X45 = true;
+
+  //the maximum amperadge the motors can draw before shutting off
+  int currentLimit = 8;
   
   
 
@@ -69,4 +74,6 @@ void JoystickArm();
   frc::XboxController m_armControll{1};
   //pdh
   frc::PowerDistribution m_pdp{1, frc::PowerDistribution::ModuleType::kCTRE};
+  //pneumatics
+  frc::DoubleSolenoid m_doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 0, 1};
 };

@@ -11,18 +11,21 @@ void Robot::RobotInit()
   m_driveMotorLFront.SetNeutralMode(Brake);
   m_driveMotorRBack.SetNeutralMode(Brake);
   m_driveMotorRFront.SetNeutralMode(Brake);
+  //sets the solanoid to its backward position when the robot turnes on
+  m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kForward);
 }
 void Robot::RobotPeriodic() {}
 
 void Robot::AutonomousInit() 
 {
-  //drive(-0.5, 0.5);
+  std::cout << "very cool auto :D";
 }
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() 
 {
+  //if you have a joythick plugged in it will set the controll to the joystick
   if(Joystick)
   {
     if(m_joystick.GetRawButton(12))
@@ -36,9 +39,11 @@ void Robot::TeleopPeriodic()
       JoystickArm();
     }
   }
+  //if you dont it sets the controll to an xbox controller
   else
   {
     XboxDirection();
+    XboxArm();
   }
 }
 
@@ -95,6 +100,7 @@ void Robot::XboxDirection()
 //the y button launces at full speed, the x button is for the amp, and the A button is for the intake
 void Robot::XboxArm()
 {
+  //controlls the shooting at two different speeds with falcons
   if(m_armControll.GetAButton())
   {
     m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
@@ -110,11 +116,20 @@ void Robot::XboxArm()
     m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
     m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
   }
-  
+  //stops the arm if no button is pressed
   if(!m_armControll.GetAButton() && !m_armControll.GetXButton() && !m_armControll.GetYButton())
   {
     m_intakeL.Set(ControlMode::PercentOutput, 0);
     m_intakeR.Set(ControlMode::PercentOutput, 0);
+  }
+  //changes the status of the double solanoid when the b button is pressed
+  if(m_armControll.GetBButton())
+  {
+    m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kReverse);
+  }
+  else
+  {
+    m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kForward);
   }
 }
 
@@ -176,8 +191,9 @@ void Robot::drive(double left, double right)
     }
   }
   //checks the current on the PDH channel that each motor is on before letting them drive
-  if(m_pdp.GetCurrent(12) < 10 && m_pdp.GetCurrent(15) < 10
-   && m_pdp.GetCurrent(0) < 10 && m_pdp.GetCurrent(3) < 10)
+  //the maximum amperage is the currentLimit value declared in the header file
+  if(m_pdp.GetCurrent(12) < currentLimit && m_pdp.GetCurrent(15) < currentLimit
+   && m_pdp.GetCurrent(0) < currentLimit && m_pdp.GetCurrent(3) < currentLimit)
    {
     m_driveMotorLBack.Set(ControlMode::PercentOutput, left);
     m_driveMotorLFront.Set(ControlMode::PercentOutput, left);
