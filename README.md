@@ -7,10 +7,13 @@ there is also code for an Xbox controller that uses a dual-stick tank drive from
 The A button controls the intake, X shoots for the amp at a lower speed, and Y shoots higher. The right bumper button on the controller changes the drive speed to about 1/4 of the normal drive speed.
 
 *Latest Updates*
+
 I added support for a pnumatics system with one double solanoid and a single piston. this is currently made to work with the CTRE PCM, but can be easily changed to work with the REV PH. The pneumatics currently only have support with the Xbox controller, wich also has to be driving.
 
+you can now use one controller for drive and another for mech. you can also still use one controller for both. see the comments in the header file for more info.
+
 *To Do*
+
 I am working on adding support for the Logitech X3D joystick, but that code currently doesn't work.
-I want to be able to use one controller for drive and another for mech.
 There is no auto.
 
