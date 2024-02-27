@@ -12,7 +12,9 @@ void Robot::RobotInit()
   m_driveMotorRBack.SetNeutralMode(Brake);
   m_driveMotorRFront.SetNeutralMode(Brake);
   //sets the solanoid to its backward position when the robot turnes on
-  m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kForward);
+  m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kForward);
+  m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kForward);
+
 }
 void Robot::RobotPeriodic() {}
 
@@ -123,11 +125,13 @@ void Robot::XboxArm()
   //changes the status of the double solanoid when the b button is pressed
   if(m_armControll.GetBButton())
   {
-    m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kReverse);
+    m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kReverse);
+    m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kReverse);
   }
   else
   {
-    m_doubleSolenoid.Set(frc::DoubleSolenoid::Value::kForward);
+    m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kForward);
+    m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kForward);
   }
 }
 
@@ -171,7 +175,7 @@ void Robot::JoystickArm()
 void Robot::drive(double left, double right)
 {
   //if a joystick is present, sets the speed to the throttle
-  if(JoystickDirection)
+  if(JoystickDrive)
   {
     //sets throttle for the Saitek X45 joysticks
     if(X45)

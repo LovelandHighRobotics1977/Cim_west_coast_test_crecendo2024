@@ -38,7 +38,7 @@ class Robot : public frc::TimedRobot {
   double ampSpeed = 0.3;
   double shootSpeed = 1;
 
-  //sets the robots max drive speed for the Xbox controller with dual stick
+  //sets the robots max drive speed for the Xbox controller with dual stick (Xbox)
   double DriveSpeed = 0.6;
 
   //variables that tell the robot which controller your using
@@ -78,5 +78,6 @@ void JoystickArm();
   //pdh
   frc::PowerDistribution m_pdp{1, frc::PowerDistribution::ModuleType::kCTRE};
   //pneumatics
-  frc::DoubleSolenoid m_doubleSolenoid{frc::PneumaticsModuleType::CTREPCM, 0, 1};
+  frc::DoubleSolenoid m_doubleSolenoidLeft{frc::PneumaticsModuleType::CTREPCM, 0, 1};
+  frc::DoubleSolenoid m_doubleSolenoidRight{frc::PneumaticsModuleType::CTREPCM, 2, 3};
 };
