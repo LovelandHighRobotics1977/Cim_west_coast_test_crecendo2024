@@ -6,14 +6,18 @@ If you use the Saitek X45 joysticks. the main stick is for single stick tank dri
 there is also code for an Xbox controller that uses a dual-stick tank drive from the two sticks of the controller. the mech is run by the A, X, and Y buttons.
 The A button controls the intake, X shoots for the amp at a lower speed, and Y shoots higher. The right bumper button on the controller changes the drive speed to about 1/4 of the normal drive speed.
 
+We also have support for two pistons using double solanoids. support is only for the Xbox controller. press the B button to raise the pistons and release to lower them.
+
 *Latest Updates*
 
-I added support for a pnumatics system with one double solanoid and a single piston. this is currently made to work with the CTRE PCM, but can be easily changed to work with the REV PH. The pneumatics currently only have support with the Xbox controller, wich also has to be driving.
-
-you can now use one controller for drive and another for mech. you can also still use one controller for both. see the comments in the header file for more info.
+Added support for two pistons
 
 *To Do*
 
 I am working on adding support for the Logitech X3D joystick, but that code currently doesn't work.
+
 There is no auto.
 
+add a way to switch wich mech you are using, if any at all
+
+add joystick support for pneumatics.
