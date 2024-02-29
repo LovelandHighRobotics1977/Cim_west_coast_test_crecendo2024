@@ -10,14 +10,10 @@ We also have support for two pistons using double solanoids. support is only for
 
 *Latest Updates*
 
-Added support for two pistons
+Added joystick support for the pistons and made it possible to turn off the different mech functions
 
 *To Do*
 
 I am working on adding support for the Logitech X3D joystick, but that code currently doesn't work.
 
 There is no auto.
-
-add a way to switch wich mech you are using, if any at all
-
-add joystick support for pneumatics.
