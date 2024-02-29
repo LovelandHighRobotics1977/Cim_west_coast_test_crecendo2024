@@ -46,7 +46,14 @@ class Robot : public frc::TimedRobot {
   //if the value is false, you are using Xbox
   bool JoystickDrive = false;
   bool JoystickMech = false;
+  //If you are using the x45 joystick it will change how the throttle is calculated
   bool X45 = true;
+
+  //sets the mech that you are using
+  //enable the piston mech. made to run two pistons off a pair of dual solanoids
+  bool pistons = true;
+  //enable the shooter mech. made for two falcon motors
+  bool shooter = false;
 
   //the maximum amperadge the motors can draw before shutting off
   int currentLimit = 8;

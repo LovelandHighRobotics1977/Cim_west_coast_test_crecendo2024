@@ -100,38 +100,44 @@ void Robot::XboxDirection()
 //the y button launces at full speed, the x button is for the amp, and the A button is for the intake
 void Robot::XboxArm()
 {
-  //controlls the shooting at two different speeds with falcons
-  if(m_armControll.GetAButton())
+  //controlls the shooting at two different speeds as well as reverse with falcons
+  if(shooter)
   {
-    m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
-    m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
-  }
-  if(m_armControll.GetXButton())
-  {
-    m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
-    m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
-  }
-  if(m_armControll.GetYButton())
-  {
-    m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
-    m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
-  }
-  //stops the arm if no button is pressed
-  if(!m_armControll.GetAButton() && !m_armControll.GetXButton() && !m_armControll.GetYButton())
-  {
-    m_intakeL.Set(ControlMode::PercentOutput, 0);
-    m_intakeR.Set(ControlMode::PercentOutput, 0);
+    if(m_armControll.GetAButton())
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
+    }
+    if(m_armControll.GetXButton())
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
+    }
+    if(m_armControll.GetYButton())
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
+      m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
+    }
+    //stops the arm if no button is pressed
+    if(!m_armControll.GetAButton() && !m_armControll.GetXButton() && !m_armControll.GetYButton())
+    {
+      m_intakeL.Set(ControlMode::PercentOutput, 0);
+      m_intakeR.Set(ControlMode::PercentOutput, 0);
+    }
   }
   //changes the status of the double solanoid when the b button is pressed
-  if(m_armControll.GetBButton())
+  if(pistons)
   {
-    m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kReverse);
-    m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kReverse);
-  }
-  else
-  {
-    m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kForward);
-    m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kForward);
+    if(m_armControll.GetBButton())
+    {
+      m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kReverse);
+      m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kReverse);
+    }
+    else
+    {
+      m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kForward);
+      m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kForward);
+    }
   }
 }
 
@@ -143,31 +149,62 @@ void Robot::XboxArm()
 //the speed for both parts is controlled by the upper knob
 void Robot::JoystickArm()
 {
-  shootSpeed = (m_joystick.GetRawAxis(2)+1)/2;
-  ampSpeed = (m_joystick.GetRawAxis(2)+1)/4;
-  //if (m_pdp.GetCurrent(15) < 10 && m_pdp.GetCurrent(2) < 10)
+  //turns on or off the shooter mechanisum as needed
+  if(shooter)
   {
-    if(m_joystick.GetRawButton(20))
+      //if the mech controller is the x45, it will set the shooting speeds from the two knobs on the throttle
+    if(X45)
     {
-      m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
-      m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
+      shootSpeed = (m_joystick.GetRawAxis(2)+1)/2;
+      ampSpeed = (m_joystick.GetRawAxis(2)+1)/4;
     }
-    if(m_joystick.GetRawButton(22))
+
+    //checks to make sure the robot wont brown out when the arm fires
+    if (m_pdp.GetCurrent(15) < 10 && m_pdp.GetCurrent(2) < 10)
     {
-      m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
-      m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
+      //checks the mech buttons on the joystick and does the appropriate action
+      if(m_joystick.GetRawButton(20))
+      {
+        m_intakeL.Set(ControlMode::PercentOutput, intakeSpeed);
+        m_intakeR.Set(ControlMode::PercentOutput, -intakeSpeed);
+      }
+      if(m_joystick.GetRawButton(22))
+      {
+        m_intakeL.Set(ControlMode::PercentOutput, -ampSpeed);
+        m_intakeR.Set(ControlMode::PercentOutput, ampSpeed);
+      }
+      if(m_joystick.GetRawButton(19))
+      {
+        m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
+        m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
+      }
+      if(!m_joystick.GetRawButton(20) && !m_joystick.GetRawButton(22) && !m_joystick.GetRawButton(19))
+      {
+        m_intakeL.Set(ControlMode::PercentOutput, 0);
+        m_intakeR.Set(ControlMode::PercentOutput, 0);
+      }
     }
-    if(m_joystick.GetRawButton(19))
+    //if the current is too low, it stops the motors to prevent a brownout
+    else
     {
-      m_intakeL.Set(ControlMode::PercentOutput, -shootSpeed);
-      m_intakeR.Set(ControlMode::PercentOutput, shootSpeed);
-  }
+      m_intakeL.Set(ControlMode::PercentOutput, 0);
+      m_intakeR.Set(ControlMode::PercentOutput, 0);
+    }
   }
   
-  if(!m_joystick.GetRawButton(20) && !m_joystick.GetRawButton(22) && !m_joystick.GetRawButton(19))
+  //turn on or off the piston mech as needed
+  if(pistons)
   {
-    m_intakeL.Set(ControlMode::PercentOutput, 0);
-    m_intakeR.Set(ControlMode::PercentOutput, 0);
+    if(m_joystick.GetRawButton(15))
+    {
+      m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kReverse);
+      m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kReverse);
+    }
+    else
+    {
+      m_doubleSolenoidLeft.Set(frc::DoubleSolenoid::Value::kForward);
+      m_doubleSolenoidRight.Set(frc::DoubleSolenoid::Value::kForward);
+    }
   }
 }
 
