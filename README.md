@@ -8,11 +8,11 @@ The A button controls the intake, X shoots for the amp at a lower speed, and Y s
 
 We also have support for two pistons using double solanoids. support is only for the Xbox controller. press the B button to raise the pistons and release to lower them.
 
-*Latest Updates*
+**Latest Updates**
 
 Added joystick support for the pistons and made it possible to turn off the different mech functions
 
-*To Do*
+**To Do**
 
 I am working on adding support for the Logitech X3D joystick, but that code currently doesn't work.
 
