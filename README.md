@@ -20,6 +20,7 @@ There is no auto.
 
 
 **Can conventions**
+
 below is a chart of the standard can numbering conventions that we have been using. It is a good idea to ty and follow this, as it means that one coadbase can work for many robots
 | ID |    Swerve ( 1977 )    |    Swerve ( 1822 )   |       Westcoast      |
 |:--:|:---------------------:|:--------------------:|:--------------------:|
